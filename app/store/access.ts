@@ -26,6 +26,14 @@ import { ensure } from "../utils/clone";
 import { DEFAULT_CONFIG } from "./config";
 import { getModelProvider } from "../utils/model";
 
+// Custom OpenAI Model type
+export type CustomOpenAIModel = {
+  id: string;
+  url: string;
+  apiKey: string;
+  modelName: string;
+};
+
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
 const isApp = getClientConfig()?.buildMode === "export";
@@ -151,6 +159,9 @@ const DEFAULT_ACCESS_STATE = {
 
   // tts config
   edgeTTSVoiceName: "zh-CN-YunxiNeural",
+
+  // custom openai models
+  customOpenAIModels: [] as CustomOpenAIModel[],
 };
 
 export const useAccessStore = createPersistStore(
@@ -226,6 +237,15 @@ export const useAccessStore = createPersistStore(
       return ensure(get(), ["siliconflowApiKey"]);
     },
 
+    isValidCustomOpenAIModel(id: string) {
+      const model = get().customOpenAIModels.find((m) => m.id === id);
+      return model && model.url && model.apiKey && model.modelName;
+    },
+
+    getCustomOpenAIModel(id: string) {
+      return get().customOpenAIModels.find((m) => m.id === id);
+    },
+
     isAuthorized() {
       this.fetch();
 
@@ -264,7 +284,7 @@ export const useAccessStore = createPersistStore(
           const defaultModel = res.defaultModel ?? "";
           if (defaultModel !== "") {
             const [model, providerName] = getModelProvider(defaultModel);
-            DEFAULT_CONFIG.modelConfig.model = model;
+            DEFAULT_CONFIG.modelConfig.model = model as never;
             DEFAULT_CONFIG.modelConfig.providerName = providerName as any;
           }
 

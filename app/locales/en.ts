@@ -522,6 +522,33 @@ const en: LocaleType = {
         Title: "Custom Models",
         SubTitle: "Custom model options, seperated by comma",
       },
+      CustomOpenAI: {
+        Title: "Custom OpenAI Models",
+        SubTitle: "Configure multiple custom OpenAI-compatible endpoints",
+        Models: "models",
+        ModelList: {
+          Title: "Manage Custom Models",
+        },
+        Add: "Add Model",
+        Empty: "No custom models configured",
+        Untitled: "Untitled Model",
+        Url: {
+          Title: "API URL",
+          SubTitle: "OpenAI-compatible endpoint (e.g., http://localhost:11434/v1)",
+        },
+        ApiKey: {
+          Title: "API Key",
+          SubTitle: "API key for this endpoint",
+          Placeholder: "Enter API Key",
+        },
+        ModelName: {
+          Title: "Model Name",
+          SubTitle: "The model name to use (e.g., llama3, gpt-3.5-turbo)",
+        },
+        SelectorPlaceholder: "Select custom model...",
+        CurrentModel: "Current Custom Model",
+        SwitchToMain: "Switch to Main Models",
+      },
       Google: {
         ApiKey: {
           Title: "API Key",

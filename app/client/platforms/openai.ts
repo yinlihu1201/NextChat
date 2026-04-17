@@ -82,13 +82,16 @@ export interface DalleRequestPayload {
 export class ChatGPTApi implements LLMApi {
   private disableListModels = true;
 
-  path(path: string): string {
+  path(path: string, customUrl?: string): string {
     const accessStore = useAccessStore.getState();
 
     let baseUrl = "";
-
     const isAzure = path.includes("deployments");
-    if (accessStore.useCustomConfig) {
+
+    // If custom URL is provided (for CustomOpenAI models), use it
+    if (customUrl && customUrl.length > 0) {
+      baseUrl = customUrl;
+    } else if (accessStore.useCustomConfig) {
       if (isAzure && !accessStore.isValidAzure()) {
         throw Error(
           "incomplete azure config, please check it in your settings page",
@@ -273,6 +276,19 @@ export class ChatGPTApi implements LLMApi {
 
     try {
       let chatPath = "";
+      // Get custom model URL if using CustomOpenAI
+      let customModelUrl = "";
+      if (modelConfig.providerName === ServiceProvider.CustomOpenAI) {
+        const customModel = useAccessStore
+          .getState()
+          .customOpenAIModels.find(
+            (m) => m.modelName === modelConfig.model,
+          );
+        if (customModel) {
+          customModelUrl = customModel.url;
+        }
+      }
+
       if (modelConfig.providerName === ServiceProvider.Azure) {
         // find model, and get displayName as deployName
         const { models: configModels, customModels: configCustomModels } =
@@ -301,6 +317,7 @@ export class ChatGPTApi implements LLMApi {
       } else {
         chatPath = this.path(
           isDalle3 ? OpenaiPath.ImagePath : OpenaiPath.ChatPath,
+          customModelUrl || undefined,
         );
       }
       if (shouldStream) {

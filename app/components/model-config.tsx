@@ -1,5 +1,5 @@
 import { ServiceProvider } from "@/app/constant";
-import { ModalConfigValidator, ModelConfig } from "../store";
+import { ModalConfigValidator, ModelConfig, useAccessStore } from "../store";
 
 import Locale from "../locales";
 import { InputRange } from "./input-range";
@@ -14,6 +14,7 @@ export function ModelConfigList(props: {
   updateConfig: (updater: (config: ModelConfig) => void) => void;
 }) {
   const allModels = useAllModels();
+  const accessStore = useAccessStore();
   const groupModels = groupBy(
     allModels.filter((v) => v.available),
     "provider.providerName",
@@ -21,13 +22,53 @@ export function ModelConfigList(props: {
   const value = `${props.modelConfig.model}@${props.modelConfig?.providerName}`;
   const compressModelValue = `${props.modelConfig.compressModel}@${props.modelConfig?.compressProviderName}`;
 
+  // Check if using custom model
+  const isUsingCustomModel =
+    props.modelConfig.providerName === ServiceProvider.CustomOpenAI;
+  const customModels = accessStore.customOpenAIModels;
+
   return (
     <>
+      {/* Custom OpenAI Model Selector - shown when not using custom model */}
+      {!isUsingCustomModel && customModels.length > 0 && (
+        <ListItem
+          title={Locale.Settings.Access.CustomOpenAI?.Title || "Custom Model"}
+          subTitle={Locale.Settings.Access.CustomOpenAI?.SubTitle || "Select a custom model"}
+        >
+          <Select
+            aria-label="Custom Model"
+            value=""
+            onChange={(e) => {
+              const customModel = customModels.find(
+                (m) => m.modelName === e.currentTarget.value,
+              );
+              if (customModel) {
+                props.updateConfig((config) => {
+                  config.model = customModel.modelName;
+                  config.providerName = ServiceProvider.CustomOpenAI;
+                });
+              }
+            }}
+          >
+            <option value="" key="empty">
+              {Locale.Settings.Access.CustomOpenAI?.SelectorPlaceholder || "Select..."}
+            </option>
+            {customModels.map((model) => (
+              <option value={model.modelName} key={model.id}>
+                {model.modelName}
+              </option>
+            ))}
+          </Select>
+        </ListItem>
+      )}
+
+      {/* Main Model Selector - disabled when using custom model */}
       <ListItem title={Locale.Settings.Model}>
         <Select
           aria-label={Locale.Settings.Model}
           value={value}
           align="left"
+          disabled={isUsingCustomModel}
           onChange={(e) => {
             const [model, providerName] = getModelProvider(
               e.currentTarget.value,
@@ -49,6 +90,25 @@ export function ModelConfigList(props: {
           ))}
         </Select>
       </ListItem>
+
+      {/* Return to main models button - shown when using custom model */}
+      {isUsingCustomModel && (
+        <ListItem
+          title={Locale.Settings.Access.CustomOpenAI?.CurrentModel || "Current Custom Model"}
+          subTitle={props.modelConfig.model}
+        >
+          <button
+            onClick={() => {
+              props.updateConfig((config) => {
+                config.model = "gpt-4o-mini";
+                config.providerName = ServiceProvider.OpenAI;
+              });
+            }}
+          >
+            {Locale.Settings.Access.CustomOpenAI?.SwitchToMain || "Switch to Main Models"}
+          </button>
+        </ListItem>
+      )}
       <ListItem
         title={Locale.Settings.Temperature.Title}
         subTitle={Locale.Settings.Temperature.SubTitle}

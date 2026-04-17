@@ -270,7 +270,21 @@ export function getHeaders(ignoreHeaders: boolean = false) {
     const isSiliconFlow =
       modelConfig.providerName === ServiceProvider.SiliconFlow;
     const isAI302 = modelConfig.providerName === ServiceProvider["302.AI"];
+    const isCustomOpenAI =
+      modelConfig.providerName === ServiceProvider.CustomOpenAI;
     const isEnabledAccessControl = accessStore.enabledAccessControl();
+
+    // Get custom model API key if using CustomOpenAI
+    let customApiKey = "";
+    if (isCustomOpenAI) {
+      const customModel = accessStore.customOpenAIModels.find(
+        (m) => m.modelName === modelConfig.model,
+      );
+      if (customModel) {
+        customApiKey = customModel.apiKey;
+      }
+    }
+
     const apiKey = isGoogle
       ? accessStore.googleApiKey
       : isAzure
@@ -297,6 +311,8 @@ export function getHeaders(ignoreHeaders: boolean = false) {
         : ""
       : isAI302
       ? accessStore.ai302ApiKey
+      : isCustomOpenAI
+      ? customApiKey
       : accessStore.openaiApiKey;
     return {
       isGoogle,

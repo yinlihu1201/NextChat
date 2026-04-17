@@ -538,6 +538,33 @@ const cn = {
         Title: "自定义模型名",
         SubTitle: "增加自定义模型可选项，使用英文逗号隔开",
       },
+      CustomOpenAI: {
+        Title: "自定义 OpenAI 模型",
+        SubTitle: "配置多个自定义 OpenAI 兼容端点",
+        Models: "个模型",
+        ModelList: {
+          Title: "管理自定义模型",
+        },
+        Add: "添加模型",
+        Empty: "暂无自定义模型",
+        Untitled: "未命名模型",
+        Url: {
+          Title: "API 地址",
+          SubTitle: "OpenAI 兼容端点 (如 http://localhost:11434)",
+        },
+        ApiKey: {
+          Title: "API 密钥",
+          SubTitle: "该端点的 API 密钥",
+          Placeholder: "输入 API 密钥",
+        },
+        ModelName: {
+          Title: "模型名称",
+          SubTitle: "要使用的模型名称 (如 llama3, gpt-3.5-turbo)",
+        },
+        SelectorPlaceholder: "选择自定义模型...",
+        CurrentModel: "当前自定义模型",
+        SwitchToMain: "切换回主模型",
+      },
       AI302: {
         ApiKey: {
           Title: "接口密钥",

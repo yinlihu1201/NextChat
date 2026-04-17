@@ -244,6 +244,141 @@ function UserPromptModal(props: { onClose?: () => void }) {
   );
 }
 
+function CustomModelModal(props: { onClose?: () => void }) {
+  const accessStore = useAccessStore();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [models, setModels] = useState(accessStore.customOpenAIModels);
+
+  const handleSave = () => {
+    accessStore.update((state) => {
+      state.customOpenAIModels = models;
+    });
+    props.onClose?.();
+  };
+
+  const handleAdd = () => {
+    const newModel = {
+      id: nanoid(),
+      url: "",
+      apiKey: "",
+      modelName: "",
+    };
+    setModels([...models, newModel]);
+    setEditingId(newModel.id);
+  };
+
+  const handleDelete = (id: string) => {
+    setModels(models.filter((m) => m.id !== id));
+  };
+
+  const handleUpdate = (id: string, field: string, value: string) => {
+    setModels(
+      models.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
+    );
+  };
+
+  const currentModel = editingId
+    ? models.find((m) => m.id === editingId)
+    : null;
+
+  return (
+    <div className="modal-mask">
+      <Modal
+        title={Locale.Settings.Access.CustomOpenAI.ModelList.Title}
+        onClose={() => props.onClose?.()}
+        actions={[
+          <IconButton
+            key="add"
+            onClick={handleAdd}
+            icon={<AddIcon />}
+            bordered
+            text={Locale.Settings.Access.CustomOpenAI.Add}
+          />,
+          <IconButton
+            key="confirm"
+            onClick={handleSave}
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.UI.Confirm}
+          />,
+        ]}
+      >
+        <List>
+          {models.map((model) => (
+            <ListItem
+              key={model.id}
+              title={model.modelName || Locale.Settings.Access.CustomOpenAI.Untitled}
+              subTitle={model.url}
+            >
+              <div style={{ display: "flex", gap: "4px" }}>
+                <IconButton
+                  icon={<EditIcon />}
+                  onClick={() => setEditingId(model.id)}
+                  aria-label="Edit"
+                />
+                <IconButton
+                  icon={<ClearIcon />}
+                  onClick={() => handleDelete(model.id)}
+                  aria-label="Delete"
+                />
+              </div>
+            </ListItem>
+          ))}
+          {models.length === 0 && (
+            <ListItem
+              title={Locale.Settings.Access.CustomOpenAI.Empty}
+            ></ListItem>
+          )}
+        </List>
+
+        {currentModel && (
+          <List>
+            <ListItem
+              title={Locale.Settings.Access.CustomOpenAI.Url.Title}
+              subTitle={Locale.Settings.Access.CustomOpenAI.Url.SubTitle}
+            >
+              <input
+                type="text"
+                value={currentModel.url}
+                placeholder="http://localhost:11434/v1"
+                onChange={(e) =>
+                  handleUpdate(currentModel.id, "url", e.currentTarget.value)
+                }
+              ></input>
+            </ListItem>
+            <ListItem
+              title={Locale.Settings.Access.CustomOpenAI.ApiKey.Title}
+              subTitle={Locale.Settings.Access.CustomOpenAI.ApiKey.SubTitle}
+            >
+              <PasswordInput
+                value={currentModel.apiKey}
+                type="text"
+                placeholder={Locale.Settings.Access.CustomOpenAI.ApiKey.Placeholder}
+                onChange={(e) =>
+                  handleUpdate(currentModel.id, "apiKey", e.currentTarget.value)
+                }
+              />
+            </ListItem>
+            <ListItem
+              title={Locale.Settings.Access.CustomOpenAI.ModelName.Title}
+              subTitle={Locale.Settings.Access.CustomOpenAI.ModelName.SubTitle}
+            >
+              <input
+                type="text"
+                value={currentModel.modelName}
+                placeholder="llama3, gpt-3.5-turbo, etc."
+                onChange={(e) =>
+                  handleUpdate(currentModel.id, "modelName", e.currentTarget.value)
+                }
+              ></input>
+            </ListItem>
+          </List>
+        )}
+      </Modal>
+    </div>
+  );
+}
+
 function DangerItems() {
   const chatStore = useChatStore();
   const appConfig = useAppConfig();
@@ -645,6 +780,7 @@ export function Settings() {
   const builtinCount = SearchService.count.builtin;
   const customCount = promptStore.getUserPrompts().length ?? 0;
   const [shouldShowPromptModal, setShowPromptModal] = useState(false);
+  const [shouldShowCustomModelModal, setShowCustomModelModal] = useState(false);
 
   const showUsage = accessStore.isAuthorized();
   useEffect(() => {
@@ -1913,6 +2049,23 @@ export function Settings() {
               }
             ></input>
           </ListItem>
+
+          {/* Custom OpenAI Models Section */}
+          <ListItem
+            title={Locale.Settings.Access.CustomOpenAI.Title}
+            subTitle={Locale.Settings.Access.CustomOpenAI.SubTitle}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "12px", color: "#666" }}>
+                {accessStore.customOpenAIModels.length} {Locale.Settings.Access.CustomOpenAI.Models}
+              </span>
+              <IconButton
+                icon={<ConfigIcon />}
+                text={Locale.UI.Config}
+                onClick={() => setShowCustomModelModal(true)}
+              />
+            </div>
+          </ListItem>
         </List>
 
         <List>
@@ -1928,6 +2081,9 @@ export function Settings() {
 
         {shouldShowPromptModal && (
           <UserPromptModal onClose={() => setShowPromptModal(false)} />
+        )}
+        {shouldShowCustomModelModal && (
+          <CustomModelModal onClose={() => setShowCustomModelModal(false)} />
         )}
         <List>
           <RealtimeConfigList
