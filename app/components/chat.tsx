@@ -450,6 +450,31 @@ export function ChatAction(props: {
   );
 }
 
+export function ChatActionTitle(props: {
+  text: string;
+  icon: JSX.Element;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      className={clsx(styles["chat-input-action"], "clickable")}
+      onClick={props.onClick}
+    >
+      <div className={styles["icon"]}>
+        {props.icon}
+      </div>
+      <div style={{
+        opacity: 1,
+        paddingLeft: 5,
+        visibility: "visible",
+        color: "inherit",
+      }}>
+        {props.text}
+      </div>
+    </div>
+  );
+}
+
 function useScrollToBottom(
   scrollRef: RefObject<HTMLDivElement>,
   detach: boolean = false,
@@ -613,13 +638,6 @@ export function ChatActions(props: {
             icon={<BottomIcon />}
           />
         )}
-        {props.hitBottom && (
-          <ChatAction
-            onClick={props.showPromptModal}
-            text={Locale.Chat.InputActions.Settings}
-            icon={<SettingsIcon />}
-          />
-        )}
 
         {showUploadImage && (
           <ChatAction
@@ -628,7 +646,7 @@ export function ChatActions(props: {
             icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
           />
         )}
-        <ChatAction
+        {/*<ChatAction
           onClick={nextTheme}
           text={Locale.Chat.InputActions.Theme[theme]}
           icon={
@@ -642,23 +660,29 @@ export function ChatActions(props: {
               ) : null}
             </>
           }
+        />*/}
+
+        <ChatActionTitle
+          onClick={props.showPromptModal}
+          text={Locale.Chat.InputActions.Settings}
+          icon={<SettingsIcon />}
         />
 
-        <ChatAction
+        <ChatActionTitle
           onClick={props.showPromptHints}
           text={Locale.Chat.InputActions.Prompt}
           icon={<PromptIcon />}
         />
 
-        <ChatAction
+        {/*<ChatAction
           onClick={() => {
             navigate(Path.Masks);
           }}
           text={Locale.Chat.InputActions.Masks}
           icon={<MaskIcon />}
-        />
+        />*/}
 
-        <ChatAction
+        <ChatActionTitle
           text={Locale.Chat.InputActions.Clear}
           icon={<BreakIcon />}
           onClick={() => {
@@ -673,7 +697,7 @@ export function ChatActions(props: {
           }}
         />
 
-        <ChatAction
+        <ChatActionTitle
           onClick={() => setShowModelSelector(true)}
           text={currentModelName}
           icon={<RobotIcon />}
@@ -825,13 +849,13 @@ export function ChatActions(props: {
           />
         )}
 
-        {!isMobileScreen && (
+        {/*{!isMobileScreen && (
           <ChatAction
             onClick={() => props.setShowShortcutKeyModal(true)}
             text={Locale.Chat.ShortcutKey.Title}
             icon={<ShortcutkeyIcon />}
           />
-        )}
+        )}*/}
         {!isMobileScreen && <MCPAction />}
       </>
       <div className={styles["chat-input-actions-end"]}>
