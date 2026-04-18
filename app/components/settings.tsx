@@ -1661,6 +1661,23 @@ export function Settings() {
       </div>
       <div className={styles["settings"]}>
         <List>
+          <ListItem
+            title={Locale.Settings.Access.CustomOpenAI.Title}
+            subTitle={Locale.Settings.Access.CustomOpenAI.SubTitle}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "12px", color: "#666" }}>
+                {accessStore.customOpenAIModels.length} {Locale.Settings.Access.CustomOpenAI.Models}
+              </span>
+              <IconButton
+                icon={<ConfigIcon />}
+                text={Locale.UI.Config}
+                onClick={() => setShowCustomModelModal(true)}
+              />
+            </div>
+          </ListItem>
+        </List>
+        <List>
           <ListItem title={Locale.Settings.Avatar}>
             <Popover
               onClose={() => setShowEmojiPicker(false)}
@@ -2050,21 +2067,6 @@ export function Settings() {
             ></input>
           </ListItem>*/}
 
-          <ListItem
-            title={Locale.Settings.Access.CustomOpenAI.Title}
-            subTitle={Locale.Settings.Access.CustomOpenAI.SubTitle}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span style={{ fontSize: "12px", color: "#666" }}>
-                {accessStore.customOpenAIModels.length} {Locale.Settings.Access.CustomOpenAI.Models}
-              </span>
-              <IconButton
-                icon={<ConfigIcon />}
-                text={Locale.UI.Config}
-                onClick={() => setShowCustomModelModal(true)}
-              />
-            </div>
-          </ListItem>
           <ModelConfigList
             modelConfig={config.modelConfig}
             updateConfig={(updater) => {
