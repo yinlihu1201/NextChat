@@ -2,7 +2,7 @@ import { useChatStore, useAccessStore, useAppConfig } from "../store";
 import { useMaskStore } from "../store/mask";
 import { usePromptStore } from "../store/prompt";
 import { useSyncStore } from "../store/sync";
-import { getLocalAppState } from "./sync";
+import { getLocalAppState, setLocalAppState, AppState } from "./sync";
 
 // Backend API URL - change port if backend runs on different port
 const BACKEND_URL =
@@ -121,17 +121,29 @@ export function initAutoSync(): void {
  */
 export async function loadFromServer(): Promise<void> {
   try {
+    console.log("[Auto-sync] Loading from server...");
     const response = await fetch(`${BACKEND_URL}/api/data`);
+    console.log("[Auto-sync] Response status:", response.status);
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const serverData = await response.json();
-    console.log("[Auto-sync] Loaded data from server");
+    console.log("[Auto-sync] Server data keys:", Object.keys(serverData));
+    console.log(
+      "[Auto-sync] Server data:",
+      JSON.stringify(serverData).substring(0, 200),
+    );
 
-    // TODO: 合并逻辑（如果需要）
-    // 这里暂时直接替换，可以使用 mergeAppState 进行更智能的合并
-    console.log("[Auto-sync] Server data loaded:", Object.keys(serverData));
+    // 检查是否有实际数据（非空对象）
+    if (serverData && Object.keys(serverData).length > 0) {
+      // 使用 setLocalAppState 将服务器数据设置到 stores
+      setLocalAppState(serverData as AppState);
+      console.log("[Auto-sync] Server data applied to stores");
+    } else {
+      console.log("[Auto-sync] No server data found, using default state");
+    }
   } catch (error) {
     console.error("[Auto-sync] Failed to load from server:", error);
     // 加载失败时使用默认状态，不阻塞应用启动
