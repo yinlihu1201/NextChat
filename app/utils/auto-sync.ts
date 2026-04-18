@@ -4,10 +4,14 @@ import { usePromptStore } from "../store/prompt";
 import { useSyncStore } from "../store/sync";
 import { getLocalAppState } from "./sync";
 
-// 防抖延迟（毫秒）
-const DEBOUNCE_DELAY = 1000;
-// 最大重试次数
+// Backend API URL - change port if backend runs on different port
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
+// Maximum retry attempts
 const MAX_RETRIES = 3;
+// Debounce delay in milliseconds
+const DEBOUNCE_DELAY = 1000;
 
 let syncTimeout: NodeJS.Timeout | null = null;
 
@@ -37,7 +41,7 @@ function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
  */
 async function saveDataWithRetry(data: any, retries = 0): Promise<void> {
   try {
-    const response = await fetch("/api/data/sync", {
+    const response = await fetch(`${BACKEND_URL}/api/data/sync`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +121,7 @@ export function initAutoSync(): void {
  */
 export async function loadFromServer(): Promise<void> {
   try {
-    const response = await fetch("/api/data");
+    const response = await fetch(`${BACKEND_URL}/api/data`);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

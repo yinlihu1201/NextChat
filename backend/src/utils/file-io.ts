@@ -5,7 +5,7 @@ const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_PATH = path.join(DATA_DIR, "account-data.json");
 
 /**
- * 确保数据目录存在，如果不存在则创建
+ * Ensure data directory exists, create if not
  */
 export async function ensureDataDir(): Promise<void> {
   try {
@@ -16,9 +16,9 @@ export async function ensureDataDir(): Promise<void> {
 }
 
 /**
- * 读取并解析 JSON 文件
- * @param filePath 文件路径
- * @returns 解析后的对象
+ * Read and parse JSON file
+ * @param filePath - File path to read
+ * @returns Parsed object
  */
 export async function readJsonFile<T = any>(filePath: string): Promise<T> {
   const content = await readFile(filePath, "utf-8");
@@ -26,9 +26,9 @@ export async function readJsonFile<T = any>(filePath: string): Promise<T> {
 }
 
 /**
- * 将对象写入 JSON 文件（2-space indent）
- * @param filePath 文件路径
- * @param data 要写入的对象
+ * Write object to JSON file (2-space indent)
+ * @param filePath - File path to write
+ * @param data - Object to write
  */
 export async function writeJsonFile<T = any>(
   filePath: string,
@@ -38,5 +38,5 @@ export async function writeJsonFile<T = any>(
   await writeFile(filePath, content, "utf-8");
 }
 
-// 导出常量供外部使用
+// Export constants for external use
 export { DATA_DIR, DATA_PATH };
