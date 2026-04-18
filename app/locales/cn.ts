@@ -539,8 +539,10 @@ const cn = {
         SubTitle: "增加自定义模型可选项，使用英文逗号隔开",
       },
       CustomOpenAI: {
-        Title: "自定义 OpenAI 模型",
-        SubTitle: "配置多个自定义 OpenAI 兼容端点",
+        Title: "自定义模型",
+        SubTitle: "配置多个自定义符合OpenAI格式的模型",
+        ChooseTitle: "选择自定义的模型",
+        ChooseSubTitle: "选择自定义的模型",
         Models: "个模型",
         ModelList: {
           Title: "管理自定义模型",

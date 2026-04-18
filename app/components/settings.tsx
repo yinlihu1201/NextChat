@@ -621,100 +621,100 @@ function SyncConfigModal(props: { onClose?: () => void }) {
   );
 }
 
-function SyncItems() {
-  const syncStore = useSyncStore();
-  const chatStore = useChatStore();
-  const promptStore = usePromptStore();
-  const maskStore = useMaskStore();
-  const couldSync = useMemo(() => {
-    return syncStore.cloudSync();
-  }, [syncStore]);
-
-  const [showSyncConfigModal, setShowSyncConfigModal] = useState(false);
-
-  const stateOverview = useMemo(() => {
-    const sessions = chatStore.sessions;
-    const messageCount = sessions.reduce((p, c) => p + c.messages.length, 0);
-
-    return {
-      chat: sessions.length,
-      message: messageCount,
-      prompt: Object.keys(promptStore.prompts).length,
-      mask: Object.keys(maskStore.masks).length,
-    };
-  }, [chatStore.sessions, maskStore.masks, promptStore.prompts]);
-
-  return (
-    <>
-      <List>
-        <ListItem
-          title={Locale.Settings.Sync.CloudState}
-          subTitle={
-            syncStore.lastProvider
-              ? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
-                  syncStore.lastProvider
-                }]`
-              : Locale.Settings.Sync.NotSyncYet
-          }
-        >
-          <div style={{ display: "flex" }}>
-            <IconButton
-              aria={Locale.Settings.Sync.CloudState + Locale.UI.Config}
-              icon={<ConfigIcon />}
-              text={Locale.UI.Config}
-              onClick={() => {
-                setShowSyncConfigModal(true);
-              }}
-            />
-            {couldSync && (
-              <IconButton
-                icon={<ResetIcon />}
-                text={Locale.UI.Sync}
-                onClick={async () => {
-                  try {
-                    await syncStore.sync();
-                    showToast(Locale.Settings.Sync.Success);
-                  } catch (e) {
-                    showToast(Locale.Settings.Sync.Fail);
-                    console.error("[Sync]", e);
-                  }
-                }}
-              />
-            )}
-          </div>
-        </ListItem>
-
-        <ListItem
-          title={Locale.Settings.Sync.LocalState}
-          subTitle={Locale.Settings.Sync.Overview(stateOverview)}
-        >
-          <div style={{ display: "flex" }}>
-            <IconButton
-              aria={Locale.Settings.Sync.LocalState + Locale.UI.Export}
-              icon={<UploadIcon />}
-              text={Locale.UI.Export}
-              onClick={() => {
-                syncStore.export();
-              }}
-            />
-            <IconButton
-              aria={Locale.Settings.Sync.LocalState + Locale.UI.Import}
-              icon={<DownloadIcon />}
-              text={Locale.UI.Import}
-              onClick={() => {
-                syncStore.import();
-              }}
-            />
-          </div>
-        </ListItem>
-      </List>
-
-      {showSyncConfigModal && (
-        <SyncConfigModal onClose={() => setShowSyncConfigModal(false)} />
-      )}
-    </>
-  );
-}
+// function SyncItems() {
+//   const syncStore = useSyncStore();
+//   const chatStore = useChatStore();
+//   const promptStore = usePromptStore();
+//   const maskStore = useMaskStore();
+//   const couldSync = useMemo(() => {
+//     return syncStore.cloudSync();
+//   }, [syncStore]);
+//
+//   const [showSyncConfigModal, setShowSyncConfigModal] = useState(false);
+//
+//   const stateOverview = useMemo(() => {
+//     const sessions = chatStore.sessions;
+//     const messageCount = sessions.reduce((p, c) => p + c.messages.length, 0);
+//
+//     return {
+//       chat: sessions.length,
+//       message: messageCount,
+//       prompt: Object.keys(promptStore.prompts).length,
+//       mask: Object.keys(maskStore.masks).length,
+//     };
+//   }, [chatStore.sessions, maskStore.masks, promptStore.prompts]);
+//
+//   return (
+//     <>
+//       <List>
+//         <ListItem
+//           title={Locale.Settings.Sync.CloudState}
+//           subTitle={
+//             syncStore.lastProvider
+//               ? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
+//                   syncStore.lastProvider
+//                 }]`
+//               : Locale.Settings.Sync.NotSyncYet
+//           }
+//         >
+//           <div style={{ display: "flex" }}>
+//             <IconButton
+//               aria={Locale.Settings.Sync.CloudState + Locale.UI.Config}
+//               icon={<ConfigIcon />}
+//               text={Locale.UI.Config}
+//               onClick={() => {
+//                 setShowSyncConfigModal(true);
+//               }}
+//             />
+//             {couldSync && (
+//               <IconButton
+//                 icon={<ResetIcon />}
+//                 text={Locale.UI.Sync}
+//                 onClick={async () => {
+//                   try {
+//                     await syncStore.sync();
+//                     showToast(Locale.Settings.Sync.Success);
+//                   } catch (e) {
+//                     showToast(Locale.Settings.Sync.Fail);
+//                     console.error("[Sync]", e);
+//                   }
+//                 }}
+//               />
+//             )}
+//           </div>
+//         </ListItem>
+//
+//         <ListItem
+//           title={Locale.Settings.Sync.LocalState}
+//           subTitle={Locale.Settings.Sync.Overview(stateOverview)}
+//         >
+//           <div style={{ display: "flex" }}>
+//             <IconButton
+//               aria={Locale.Settings.Sync.LocalState + Locale.UI.Export}
+//               icon={<UploadIcon />}
+//               text={Locale.UI.Export}
+//               onClick={() => {
+//                 syncStore.export();
+//               }}
+//             />
+//             <IconButton
+//               aria={Locale.Settings.Sync.LocalState + Locale.UI.Import}
+//               icon={<DownloadIcon />}
+//               text={Locale.UI.Import}
+//               onClick={() => {
+//                 syncStore.import();
+//               }}
+//             />
+//           </div>
+//         </ListItem>
+//       </List>
+//
+//       {showSyncConfigModal && (
+//         <SyncConfigModal onClose={() => setShowSyncConfigModal(false)} />
+//       )}
+//     </>
+//   );
+// }
 
 export function Settings() {
   const navigate = useNavigate();
@@ -1687,7 +1687,7 @@ export function Settings() {
             </Popover>
           </ListItem>
 
-          <ListItem
+          {/*<ListItem
             title={Locale.Settings.Update.Version(currentVersion ?? "unknown")}
             subTitle={
               checkingUpdate
@@ -1718,7 +1718,7 @@ export function Settings() {
                 onClick={() => checkUpdate(true)}
               />
             )}
-          </ListItem>
+          </ListItem>*/}
 
           <ListItem title={Locale.Settings.SendKey}>
             <Select
@@ -1757,7 +1757,7 @@ export function Settings() {
             </Select>
           </ListItem>
 
-          <ListItem title={Locale.Settings.Lang.Name}>
+          {/*<ListItem title={Locale.Settings.Lang.Name}>
             <Select
               aria-label={Locale.Settings.Lang.Name}
               value={getLang()}
@@ -1771,7 +1771,7 @@ export function Settings() {
                 </option>
               ))}
             </Select>
-          </ListItem>
+          </ListItem>*/}
 
           <ListItem
             title={Locale.Settings.FontSize.Title}
@@ -1878,9 +1878,9 @@ export function Settings() {
           </ListItem>
         </List>
 
-        <SyncItems />
+        {/*<SyncItems />*/}
 
-        <List>
+        {/*<List>
           <ListItem
             title={Locale.Settings.Mask.Splash.Title}
             subTitle={Locale.Settings.Mask.Splash.SubTitle}
@@ -1915,10 +1915,10 @@ export function Settings() {
               }
             ></input>
           </ListItem>
-        </List>
+        </List>*/}
 
         <List>
-          <ListItem
+          {/*<ListItem
             title={Locale.Settings.Prompt.Disable.Title}
             subTitle={Locale.Settings.Prompt.Disable.SubTitle}
           >
@@ -2048,9 +2048,8 @@ export function Settings() {
                 )
               }
             ></input>
-          </ListItem>
+          </ListItem>*/}
 
-          {/* Custom OpenAI Models Section */}
           <ListItem
             title={Locale.Settings.Access.CustomOpenAI.Title}
             subTitle={Locale.Settings.Access.CustomOpenAI.SubTitle}
@@ -2066,9 +2065,6 @@ export function Settings() {
               />
             </div>
           </ListItem>
-        </List>
-
-        <List>
           <ModelConfigList
             modelConfig={config.modelConfig}
             updateConfig={(updater) => {
@@ -2085,7 +2081,7 @@ export function Settings() {
         {shouldShowCustomModelModal && (
           <CustomModelModal onClose={() => setShowCustomModelModal(false)} />
         )}
-        <List>
+        {/*<List>
           <RealtimeConfigList
             realtimeConfig={config.realtimeConfig}
             updateConfig={(updater) => {
@@ -2096,8 +2092,8 @@ export function Settings() {
               );
             }}
           />
-        </List>
-        <List>
+        </List>*/}
+        {/*<List>
           <TTSConfigList
             ttsConfig={config.ttsConfig}
             updateConfig={(updater) => {
@@ -2106,7 +2102,7 @@ export function Settings() {
               config.update((config) => (config.ttsConfig = ttsConfig));
             }}
           />
-        </List>
+        </List>*/}
 
         <DangerItems />
       </div>

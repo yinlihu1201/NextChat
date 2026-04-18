@@ -30,10 +30,10 @@ export function ModelConfigList(props: {
   return (
     <>
       {/* Custom OpenAI Model Selector - shown when not using custom model */}
-      {!isUsingCustomModel && customModels.length > 0 && (
+      {/*{!isUsingCustomModel && customModels.length > 0 && (
         <ListItem
-          title={Locale.Settings.Access.CustomOpenAI?.Title || "Custom Model"}
-          subTitle={Locale.Settings.Access.CustomOpenAI?.SubTitle || "Select a custom model"}
+          title={Locale.Settings.Access.CustomOpenAI?.ChooseTitle || "Custom Model"}
+          subTitle={Locale.Settings.Access.CustomOpenAI?.ChooseSubTitle || "Select a custom model"}
         >
           <Select
             aria-label="Custom Model"
@@ -60,10 +60,10 @@ export function ModelConfigList(props: {
             ))}
           </Select>
         </ListItem>
-      )}
+      )}*/}
 
       {/* Main Model Selector - disabled when using custom model */}
-      <ListItem title={Locale.Settings.Model}>
+      {/*<ListItem title={Locale.Settings.Model}>
         <Select
           aria-label={Locale.Settings.Model}
           value={value}
@@ -89,10 +89,10 @@ export function ModelConfigList(props: {
             </optgroup>
           ))}
         </Select>
-      </ListItem>
+      </ListItem>*/}
 
       {/* Return to main models button - shown when using custom model */}
-      {isUsingCustomModel && (
+      {/*{isUsingCustomModel && (
         <ListItem
           title={Locale.Settings.Access.CustomOpenAI?.CurrentModel || "Current Custom Model"}
           subTitle={props.modelConfig.model}
@@ -108,7 +108,7 @@ export function ModelConfigList(props: {
             {Locale.Settings.Access.CustomOpenAI?.SwitchToMain || "Switch to Main Models"}
           </button>
         </ListItem>
-      )}
+      )}*/}
       <ListItem
         title={Locale.Settings.Temperature.Title}
         subTitle={Locale.Settings.Temperature.SubTitle}
