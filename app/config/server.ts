@@ -1,5 +1,5 @@
 import md5 from "spark-md5";
-import { DEFAULT_MODELS, DEFAULT_GA_ID } from "../constant";
+import { DEFAULT_MODELS } from "../constant";
 import { isGPT4Model } from "../utils/model";
 
 declare global {
@@ -143,7 +143,11 @@ export const getServerSideConfig = () => {
 
   if (disableGPT4) {
     if (customModels) customModels += ",";
-    customModels += DEFAULT_MODELS.filter((m) => isGPT4Model(m.name))
+    const defaultModelsAny = DEFAULT_MODELS as unknown as Array<{
+      name: string;
+    }>;
+    customModels += defaultModelsAny
+      .filter((m) => isGPT4Model(m.name))
       .map((m) => "-" + m.name)
       .join(",");
     if (defaultModel && isGPT4Model(defaultModel)) {
@@ -256,7 +260,7 @@ export const getServerSideConfig = () => {
     ai302ApiKey: getApiKey(process.env.AI302_API_KEY),
 
     gtmId: process.env.GTM_ID,
-    gaId: process.env.GA_ID || DEFAULT_GA_ID,
+    gaId: process.env.GA_ID || undefined,
 
     needCode: ACCESS_CODES.size > 0,
     code: process.env.CODE,

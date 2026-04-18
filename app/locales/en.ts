@@ -525,6 +525,8 @@ const en: LocaleType = {
       CustomOpenAI: {
         Title: "Custom OpenAI Models",
         SubTitle: "Configure multiple custom OpenAI-compatible endpoints",
+        ChooseTitle: "Select Custom Model",
+        ChooseSubTitle: "Select a custom model",
         Models: "models",
         ModelList: {
           Title: "Manage Custom Models",
@@ -534,7 +536,8 @@ const en: LocaleType = {
         Untitled: "Untitled Model",
         Url: {
           Title: "API URL",
-          SubTitle: "OpenAI-compatible endpoint (e.g., http://localhost:11434/v1)",
+          SubTitle:
+            "OpenAI-compatible endpoint (e.g., http://localhost:11434/v1)",
         },
         ApiKey: {
           Title: "API Key",

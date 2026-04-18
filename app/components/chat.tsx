@@ -460,15 +460,15 @@ export function ChatActionTitle(props: {
       className={clsx(styles["chat-input-action"], "clickable")}
       onClick={props.onClick}
     >
-      <div className={styles["icon"]}>
-        {props.icon}
-      </div>
-      <div style={{
-        opacity: 1,
-        paddingLeft: 5,
-        visibility: "visible",
-        color: "inherit",
-      }}>
+      <div className={styles["icon"]}>{props.icon}</div>
+      <div
+        style={{
+          opacity: 1,
+          paddingLeft: 5,
+          visibility: "visible",
+          color: "inherit",
+        }}
+      >
         {props.text}
       </div>
     </div>
@@ -609,8 +609,8 @@ export function ChatActions(props: {
       // show next model to default model if exist
       let nextModel = models.find((model) => model.isDefault) || models[0];
       chatStore.updateTargetSession(session, (session) => {
-        session.mask.modelConfig.model = nextModel.name;
-        session.mask.modelConfig.providerName = nextModel?.provider
+        (session.mask.modelConfig as any).model = nextModel.name;
+        (session.mask.modelConfig as any).providerName = nextModel?.provider
           ?.providerName as ServiceProvider;
       });
       showToast(
@@ -699,7 +699,7 @@ export function ChatActions(props: {
 
         <ChatActionTitle
           onClick={() => setShowModelSelector(true)}
-          text={currentModelName}
+          text={currentModelName ? currentModelName : '暂无模型'}
           icon={<RobotIcon />}
         />
 

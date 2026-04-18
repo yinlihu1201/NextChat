@@ -162,7 +162,11 @@ function fillTemplateWith(input: string, modelConfig: ModelConfig) {
   const cutoff =
     KnowledgeCutOffDate[modelConfig.model] ?? KnowledgeCutOffDate.default;
   // Find the model in the DEFAULT_MODELS array that matches the modelConfig.model
-  const modelInfo = DEFAULT_MODELS.find((m) => m.name === modelConfig.model);
+  const defaultModelsAny = DEFAULT_MODELS as unknown as Array<{
+    name: string;
+    provider: { providerName: string };
+  }>;
+  const modelInfo = defaultModelsAny.find((m) => m.name === modelConfig.model);
 
   var serviceProvider = "OpenAI";
   if (modelInfo) {

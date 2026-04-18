@@ -43,6 +43,7 @@ export function useAllModels() {
         available: true,
         sorted: CustomSeq.next(`custom-${m.id}`),
         provider: customProvider(ServiceProvider.CustomOpenAI),
+        isDefault: false,
       }));
 
     return [...allModels, ...customOpenAIModels];
