@@ -19,7 +19,7 @@ const cn = {
   },
   Auth: {
     Return: "返回",
-    Title: "需要密码",
+    Title: "请填写验证码",
     Tips: "管理员开启了密码验证，请在下方填入访问码",
     SubTips: "或者输入你的 OpenAI 或 Google AI 密钥",
     Input: "在此处填写访问码",

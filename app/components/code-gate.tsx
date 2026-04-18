@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import styles from "./code-gate.module.scss";
 import { IconButton } from "./button";
-import { PasswordInput } from "./ui-lib";
 import Locale from "../locales";
 import BotIcon from "../icons/bot.svg";
 import { safeLocalStorage } from "../utils";
@@ -130,10 +129,11 @@ export function CodeGate(props: CodeGateProps) {
         <div className={styles.tips}>{Locale.Auth.Tips}</div>
 
         <div className={styles.input}>
-          <PasswordInput
-            value={code}
+          <input
             type="text"
+            className={styles.codeInput}
             placeholder={Locale.Auth.Input}
+            value={code}
             onChange={(e) => {
               setCode(e.currentTarget.value);
               if (error) setError("");
