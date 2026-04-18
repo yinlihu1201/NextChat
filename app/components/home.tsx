@@ -2,7 +2,7 @@
 
 require("../polyfill");
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./home.module.scss";
 
 import BotIcon from "../icons/bot.svg";
@@ -30,6 +30,7 @@ import { type ClientApi, getClientApi } from "../client/api";
 import { useAccessStore } from "../store";
 import clsx from "clsx";
 import { initializeMcpSystem, isMcpEnabled } from "../mcp/actions";
+import { CodeGate } from "./code-gate";
 
 export function Loading(props: { noLogo?: boolean }) {
   return (
@@ -258,12 +259,23 @@ export function Home() {
     initMcp();
   }, []);
 
+  const [isCodeGateOpen, setIsCodeGateOpen] = useState(true);
+
+  const handleCodeGateSuccess = useCallback(() => {
+    setIsCodeGateOpen(false);
+  }, []);
+
+  const handleCodeGateSkip = useCallback(() => {
+    setIsCodeGateOpen(false);
+  }, []);
+
   if (!useHasHydrated()) {
     return <Loading />;
   }
 
   return (
     <ErrorBoundary>
+      <CodeGate onSuccess={handleCodeGateSuccess} onSkip={handleCodeGateSkip} />
       <Router>
         <Screen />
       </Router>
