@@ -63,7 +63,7 @@ export function ModelConfigList(props: {
       )}*/}
 
       {/* Main Model Selector - disabled when using custom model */}
-      {/*<ListItem title={Locale.Settings.Model}>
+      <ListItem title={Locale.Settings.Model}>
         <Select
           aria-label={Locale.Settings.Model}
           value={value}
@@ -89,7 +89,7 @@ export function ModelConfigList(props: {
             </optgroup>
           ))}
         </Select>
-      </ListItem>*/}
+      </ListItem>
 
       {/* Return to main models button - shown when using custom model */}
       {/*{isUsingCustomModel && (
