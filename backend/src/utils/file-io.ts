@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir, access } from "fs/promises";
 import path from "path";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const DATA_DIR = path.join("/opt", "chat", "data");
 const DATA_PATH = path.join(DATA_DIR, "account-data.json");
 
 /**
