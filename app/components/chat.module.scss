@@ -589,6 +589,30 @@
   margin-bottom: 10px;
   box-shadow: var(--shadow);
 
+  .prompt-hints-search {
+    padding: 8px;
+    border-bottom: var(--border-in-light);
+    position: sticky;
+    top: 0;
+    background-color: var(--white);
+    z-index: 1;
+
+    input {
+      width: 100%;
+      padding: 8px 12px;
+      border: var(--border-in-light);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background-color: var(--gray-100);
+      color: var(--black);
+
+      &:focus {
+        border-color: var(--primary);
+      }
+    }
+  }
+
   .prompt-hint {
     color: var(--black);
     padding: 6px 10px;

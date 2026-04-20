@@ -313,9 +313,29 @@ export function PromptHints(props: {
   prompts: RenderPrompt[];
   onPromptSelect: (prompt: RenderPrompt) => void;
 }) {
-  const noPrompts = props.prompts.length === 0;
+  const [searchText, setSearchText] = useState("");
+  const [filteredPrompts, setFilteredPrompts] = useState<RenderPrompt[]>(
+    props.prompts,
+  );
+  const noPrompts = filteredPrompts.length === 0;
   const [selectIndex, setSelectIndex] = useState(0);
   const selectedRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      setFilteredPrompts(props.prompts);
+    } else {
+      const keyword = searchText.toLowerCase();
+      setFilteredPrompts(
+        props.prompts.filter(
+          (p) =>
+            p.title.toLowerCase().includes(keyword) ||
+            p.content.toLowerCase().includes(keyword),
+        ),
+      );
+    }
+    setSelectIndex(0);
+  }, [searchText, props.prompts]);
 
   useEffect(() => {
     setSelectIndex(0);
@@ -332,7 +352,7 @@ export function PromptHints(props: {
         e.preventDefault();
         const nextIndex = Math.max(
           0,
-          Math.min(props.prompts.length - 1, selectIndex + delta),
+          Math.min(filteredPrompts.length - 1, selectIndex + delta),
         );
         setSelectIndex(nextIndex);
         selectedRef.current?.scrollIntoView({
@@ -345,7 +365,7 @@ export function PromptHints(props: {
       } else if (e.key === "ArrowDown") {
         changeIndex(-1);
       } else if (e.key === "Enter") {
-        const selectedPrompt = props.prompts.at(selectIndex);
+        const selectedPrompt = filteredPrompts.at(selectIndex);
         if (selectedPrompt) {
           props.onPromptSelect(selectedPrompt);
         }
@@ -356,12 +376,21 @@ export function PromptHints(props: {
 
     return () => window.removeEventListener("keydown", onKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.prompts.length, selectIndex]);
+  }, [filteredPrompts.length, selectIndex, noPrompts]);
 
-  if (noPrompts) return null;
+  if (props.prompts.length === 0) return null;
   return (
     <div className={styles["prompt-hints"]}>
-      {props.prompts.map((prompt, i) => (
+      <div className={styles["prompt-hints-search"]}>
+        <input
+          type="text"
+          placeholder="搜索提示词..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.currentTarget.value)}
+          autoFocus
+        />
+      </div>
+      {filteredPrompts.map((prompt, i) => (
         <div
           ref={i === selectIndex ? selectedRef : null}
           className={clsx(styles["prompt-hint"], {
@@ -699,7 +728,7 @@ export function ChatActions(props: {
 
         <ChatActionTitle
           onClick={() => setShowModelSelector(true)}
-          text={currentModelName ? currentModelName : '暂无模型'}
+          text={currentModelName ? currentModelName : "暂无模型"}
           icon={<RobotIcon />}
         />
 
