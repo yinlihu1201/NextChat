@@ -25,7 +25,7 @@ COPY --from=deps /app/node_modules ./node_modules
 # 原命令：COPY . .
 # 新命令：排除 backend 文件夹后再复制所有文件
 # .dockerignore 方式更优雅，这里直接用 COPY 排除，确保构建时不会拷贝 backend 目录
-COPY --exclude=backend . .
+COPY . .
 
 RUN yarn build
 
@@ -40,10 +40,10 @@ ENV GOOGLE_API_KEY=""
 ENV CODE=""
 ENV ENABLE_MCP=""
 
-COPY --from=builder --exclude=backend /app/public ./public
-COPY --from=builder --exclude=backend /app/.next/standalone ./
-COPY --from=builder --exclude=backend /app/.next/static ./.next/static
-COPY --from=builder --exclude=backend /app/.next/server ./.next/server
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/.next/server ./.next/server
 
 RUN mkdir -p /app/app/mcp && chmod 777 /app/app/mcp
 COPY --from=builder /app/app/mcp/mcp_config.default.json /app/app/mcp/mcp_config.json

@@ -6,7 +6,7 @@ import { getLocalAppState, setLocalAppState, AppState } from "./sync";
 
 // Backend API URL - change port if backend runs on different port
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001";
 
 // Maximum retry attempts
 const MAX_RETRIES = 3;
