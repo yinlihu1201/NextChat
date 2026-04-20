@@ -711,7 +711,7 @@ export function ChatActions(props: {
           icon={<MaskIcon />}
         />*/}
 
-        <ChatActionTitle
+        {/*<ChatActionTitle
           text={Locale.Chat.InputActions.Clear}
           icon={<BreakIcon />}
           onClick={() => {
@@ -724,7 +724,7 @@ export function ChatActions(props: {
               }
             });
           }}
-        />
+        />*/}
 
         <ChatActionTitle
           onClick={() => setShowModelSelector(true)}
