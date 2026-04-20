@@ -1,8 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { include "nextchat.fullname" . } }
-  labels: { { - include "nextchat.labels" . | nindent 4 } }
+  name: {{ include "nextchat.fullname" . }}
+  labels:
+    {{- include "nextchat.labels" . | nindent 4 }}
 spec:
   type: NodePort
   ports:
@@ -10,4 +11,5 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-  selector: { { - include "nextchat.selectorLabels" . | nindent 4 } }
+  selector:
+    {{- include "nextchat.selectorLabels" . | nindent 4 }}

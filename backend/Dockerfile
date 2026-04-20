@@ -20,8 +20,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3001
 
+# 👇 关键修复：拷贝 编译后的dist + package.json + node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
+COPY --from=deps /app/node_modules ./node_modules
 
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001 && \
