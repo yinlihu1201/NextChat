@@ -537,7 +537,7 @@ const en: LocaleType = {
         Url: {
           Title: "API URL",
           SubTitle:
-            "OpenAI-compatible endpoint (e.g., http://localhost:11434/v1)",
+            "OpenAI-compatible endpoint (e.g., http://localhost:11434)",
         },
         ApiKey: {
           Title: "API Key",

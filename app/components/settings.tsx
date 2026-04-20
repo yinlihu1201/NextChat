@@ -272,8 +272,13 @@ function CustomModelModal(props: { onClose?: () => void }) {
   };
 
   const handleUpdate = (id: string, field: string, value: string) => {
+    // Auto-strip trailing /v1 from URL if present
+    let processedValue = value;
+    if (field === "url") {
+      processedValue = value.replace(/\/v1\/?$/i, "");
+    }
     setModels(
-      models.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
+      models.map((m) => (m.id === id ? { ...m, [field]: processedValue } : m)),
     );
   };
 
@@ -307,7 +312,9 @@ function CustomModelModal(props: { onClose?: () => void }) {
           {models.map((model) => (
             <ListItem
               key={model.id}
-              title={model.modelName || Locale.Settings.Access.CustomOpenAI.Untitled}
+              title={
+                model.modelName || Locale.Settings.Access.CustomOpenAI.Untitled
+              }
               subTitle={model.url}
             >
               <div style={{ display: "flex", gap: "4px" }}>
@@ -340,7 +347,8 @@ function CustomModelModal(props: { onClose?: () => void }) {
               <input
                 type="text"
                 value={currentModel.url}
-                placeholder="http://localhost:11434/v1"
+                placeholder="http://localhost:11434"
+                style={{ width: "100%" }}
                 onChange={(e) =>
                   handleUpdate(currentModel.id, "url", e.currentTarget.value)
                 }
@@ -353,7 +361,10 @@ function CustomModelModal(props: { onClose?: () => void }) {
               <PasswordInput
                 value={currentModel.apiKey}
                 type="text"
-                placeholder={Locale.Settings.Access.CustomOpenAI.ApiKey.Placeholder}
+                placeholder={
+                  Locale.Settings.Access.CustomOpenAI.ApiKey.Placeholder
+                }
+                style={{ width: "100%" }}
                 onChange={(e) =>
                   handleUpdate(currentModel.id, "apiKey", e.currentTarget.value)
                 }
@@ -367,8 +378,13 @@ function CustomModelModal(props: { onClose?: () => void }) {
                 type="text"
                 value={currentModel.modelName}
                 placeholder="llama3, gpt-3.5-turbo, etc."
+                style={{ width: "100%" }}
                 onChange={(e) =>
-                  handleUpdate(currentModel.id, "modelName", e.currentTarget.value)
+                  handleUpdate(
+                    currentModel.id,
+                    "modelName",
+                    e.currentTarget.value,
+                  )
                 }
               ></input>
             </ListItem>
@@ -1595,44 +1611,44 @@ export function Settings() {
     </>
   );
 
-  const ai302ConfigComponent = accessStore.provider === ServiceProvider["302.AI"] && (
+  const ai302ConfigComponent = accessStore.provider ===
+    ServiceProvider["302.AI"] && (
     <>
       <ListItem
-          title={Locale.Settings.Access.AI302.Endpoint.Title}
-          subTitle={
-            Locale.Settings.Access.AI302.Endpoint.SubTitle +
-            AI302.ExampleEndpoint
+        title={Locale.Settings.Access.AI302.Endpoint.Title}
+        subTitle={
+          Locale.Settings.Access.AI302.Endpoint.SubTitle + AI302.ExampleEndpoint
+        }
+      >
+        <input
+          aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
+          type="text"
+          value={accessStore.ai302Url}
+          placeholder={AI302.ExampleEndpoint}
+          onChange={(e) =>
+            accessStore.update(
+              (access) => (access.ai302Url = e.currentTarget.value),
+            )
           }
-        >
-          <input
-            aria-label={Locale.Settings.Access.AI302.Endpoint.Title}
-            type="text"
-            value={accessStore.ai302Url}
-            placeholder={AI302.ExampleEndpoint}
-            onChange={(e) =>
-              accessStore.update(
-                (access) => (access.ai302Url = e.currentTarget.value),
-              )
-            }
-          ></input>
-        </ListItem>
-        <ListItem
-          title={Locale.Settings.Access.AI302.ApiKey.Title}
-          subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
-        >
-          <PasswordInput
-            aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
-            value={accessStore.ai302ApiKey}
-            type="text"
-            placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
-            onChange={(e) => {
-              accessStore.update(
-                (access) => (access.ai302ApiKey = e.currentTarget.value),
-              );
-            }}
-          />
-        </ListItem>
-      </>
+        ></input>
+      </ListItem>
+      <ListItem
+        title={Locale.Settings.Access.AI302.ApiKey.Title}
+        subTitle={Locale.Settings.Access.AI302.ApiKey.SubTitle}
+      >
+        <PasswordInput
+          aria-label={Locale.Settings.Access.AI302.ApiKey.Title}
+          value={accessStore.ai302ApiKey}
+          type="text"
+          placeholder={Locale.Settings.Access.AI302.ApiKey.Placeholder}
+          onChange={(e) => {
+            accessStore.update(
+              (access) => (access.ai302ApiKey = e.currentTarget.value),
+            );
+          }}
+        />
+      </ListItem>
+    </>
   );
 
   return (
@@ -1667,7 +1683,8 @@ export function Settings() {
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ fontSize: "12px", color: "#666" }}>
-                {accessStore.customOpenAIModels.length} {Locale.Settings.Access.CustomOpenAI.Models}
+                {accessStore.customOpenAIModels.length}{" "}
+                {Locale.Settings.Access.CustomOpenAI.Models}
               </span>
               <IconButton
                 icon={<ConfigIcon />}
