@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nextchat.fullname" . }}
+  labels:
+    {{- include "nextchat.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "nextchat.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "nextchat.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        # Frontend (Next.js)
+        - name: frontend
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: CODE
+              value: {{ .Values.code | quote }}
+            - name: OPENAI_API_KEY
+              value: {{ .Values.openaiApiKey | quote }}
+            - name: GOOGLE_API_KEY
+              value: {{ .Values.googleApiKey | quote }}
+            - name: BASE_URL
+              value: {{ .Values.baseUrl | quote }}
+            - name: OPENAI_ORG_ID
+              value: {{ .Values.openaiOrgId | quote }}
+            - name: HIDE_USER_API_KEY
+              value: {{ .Values.hideUserApiKey | quote }}
+            - name: DISABLE_GPT4
+              value: {{ .Values.disableGpt4 | quote }}
+            - name: ENABLE_BALANCE_QUERY
+              value: {{ .Values.enableBalanceQuery | quote }}
+            - name: DISABLE_FAST_LINK
+              value: {{ .Values.disableFastLink | quote }}
+            - name: ENABLE_MCP
+              value: {{ .Values.enableMcp | quote }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
+        # Backend (Express)
+        - name: backend
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3001
+              protocol: TCP
+          env:
+            - name: CODE
+              value: {{ .Values.code | quote }}
+            - name: NODE_ENV
+              value: {{ .Values.backend.env.nodeEnv | quote }}
+            - name: PORT
+              value: {{ .Values.backend.env.port | quote }}
+          {{- if .Values.backend.persistence.enabled }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.backend.persistence.mountPath }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+      {{- if .Values.backend.persistence.enabled }}
+      volumes:
+        - name: data
+          {{- if .Values.backend.persistence.existingClaim }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.backend.persistence.existingClaim }}
+          {{- else }}
+          persistentVolumeClaim:
+            claimName: {{ include "nextchat.fullname" . }}-data
+          {{- end }}
+      {{- end }}
