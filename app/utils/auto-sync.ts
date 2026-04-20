@@ -4,9 +4,8 @@ import { usePromptStore } from "../store/prompt";
 import { useSyncStore } from "../store/sync";
 import { getLocalAppState, setLocalAppState, AppState } from "./sync";
 
-// Backend API URL - change port if backend runs on different port
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:3001";
+// Backend API URL - now integrated into Next.js app
+const BACKEND_URL = "";
 
 // Maximum retry attempts
 const MAX_RETRIES = 3;
@@ -41,7 +40,7 @@ function debounce<T extends (...args: Parameters<T>) => ReturnType<T>>(
  */
 async function saveDataWithRetry(data: any, retries = 0): Promise<void> {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/data/sync`, {
+    const response = await fetch("/api/data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -122,7 +121,7 @@ export function initAutoSync(): void {
 export async function loadFromServer(): Promise<void> {
   try {
     console.log("[Auto-sync] Loading from server...");
-    const response = await fetch(`${BACKEND_URL}/api/data`);
+    const response = await fetch("/api/data");
     console.log("[Auto-sync] Response status:", response.status);
 
     if (!response.ok) {

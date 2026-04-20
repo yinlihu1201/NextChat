@@ -1,6 +1,6 @@
 # NextChat Helm Chart
 
-NextChat 应用的 Helm Chart，用于在 Kubernetes 集群中部署前端和后端服务。
+NextChat 应用的 Helm Chart，用于在 Kubernetes 集群中部署 NextChat（前端和后端已整合）。
 
 ## 快速开始
 
@@ -17,9 +17,8 @@ helm install nextchat ./helm -n nextchat --create-namespace
 # 指定配置安装
 helm install nextchat ./helm -n nextchat \
   --set frontend.image.repository=your-registry/chatgpt-next-web \
-  --set backend.image.repository=your-registry/nextchat-backend \
-  --set frontend.env.OPENAI_API_KEY=your-api-key \
-  --set frontend.env.CODE=your-password
+  --set openaiApiKey=your-api-key \
+  --set code=your-password
 ```
 
 ### 升级
@@ -38,44 +37,31 @@ helm uninstall nextchat -n nextchat
 
 ### 全局配置
 
-| 参数                     | 描述         | 默认值           |
-| ------------------------ | ------------ | ---------------- |
-| `global.imagePullPolicy` | 镜像拉取策略 | `IfNotPresent`   |
-| `global.imageRegistry`   | 镜像仓库地址 | 空               |
-| `global.storageClass`    | 存储类名称   | 空（使用默认类） |
+| 参数                     | 描述         | 默认值         |
+| ------------------------ | ------------ | -------------- |
+| `global.imagePullPolicy` | 镜像拉取策略 | `IfNotPresent` |
+| `global.imageRegistry`   | 镜像仓库地址 | 空             |
 
-### 前端配置
+### NextChat 配置
 
-| 参数                               | 描述           | 默认值                         |
-| ---------------------------------- | -------------- | ------------------------------ |
-| `frontend.enabled`                 | 是否启用前端   | `true`                         |
-| `frontend.replicaCount`            | Pod 副本数     | `1`                            |
-| `frontend.image.repository`        | 镜像地址       | `yidadaa/chatgpt-next-web`     |
-| `frontend.image.tag`               | 镜像标签       | `.Chart.AppVersion`            |
-| `frontend.service.type`            | Service 类型   | `ClusterIP`                    |
-| `frontend.service.port`            | 端口           | `3000`                         |
-| `frontend.resources.limits.cpu`    | CPU 限制       | `500m`                         |
-| `frontend.resources.limits.memory` | 内存限制       | `512Mi`                        |
-| `frontend.env.OPENAI_API_KEY`      | OpenAI API Key | 空                             |
-| `frontend.env.CODE`                | 访问密码       | 空                             |
-| `frontend.env.BASE_URL`            | 后端地址       | `http://nextchat-backend:3001` |
-| `frontend.env.ENABLE_MCP`          | 启用 MCP       | 空                             |
-
-### 后端配置
-
-| 参数                               | 描述           | 默认值                     |
-| ---------------------------------- | -------------- | -------------------------- |
-| `backend.enabled`                  | 是否启用后端   | `true`                     |
-| `backend.replicaCount`             | Pod 副本数     | `1`                        |
-| `backend.image.repository`         | 镜像地址       | `yidadaa/nextchat-backend` |
-| `backend.image.tag`                | 镜像标签       | `.Chart.AppVersion`        |
-| `backend.service.type`             | Service 类型   | `ClusterIP`                |
-| `backend.service.port`             | 端口           | `3001`                     |
-| `backend.persistence.enabled`      | 启用持久化存储 | `true`                     |
-| `backend.persistence.size`         | PVC 大小       | `1Gi`                      |
-| `backend.persistence.mountPath`    | 挂载路径       | `/opt/chat/data`           |
-| `backend.persistence.storageClass` | 存储类         | 空                         |
-| `backend.persistence.accessMode`   | 访问模式       | `ReadWriteOnce`            |
+| 参数                                | 描述            | 默认值                   |
+| ----------------------------------- | --------------- | ------------------------ |
+| `replicaCount`                      | Pod 副本数      | `1`                      |
+| `frontend.image.repository`         | 镜像地址        | `yidadaa/nextchat-front` |
+| `frontend.image.tag`                | 镜像标签        | `1.0`                    |
+| `frontend.resources.limits.cpu`     | CPU 限制        | `500m`                   |
+| `frontend.resources.limits.memory`  | 内存限制        | `512Mi`                  |
+| `frontend.persistence.enabled`      | 启用持久化存储  | `true`                   |
+| `frontend.persistence.size`         | PVC 大小        | `1Gi`                    |
+| `frontend.persistence.mountPath`    | 挂载路径        | `/opt/chat/data`         |
+| `frontend.persistence.storageClass` | 存储类          | 空                       |
+| `frontend.persistence.accessMode`   | 访问模式        | `ReadWriteOnce`          |
+| `openaiApiKey`                      | OpenAI API Key  | 空                       |
+| `googleApiKey`                      | Google API Key  | 空                       |
+| `baseUrl`                           | 自定义 BASE_URL | 空                       |
+| `code`                              | 访问密码        | 空                       |
+| `enableMcp`                         | 启用 MCP        | 空                       |
+| `dataDir`                           | 数据目录        | `/opt/chat/data`         |
 
 ## 示例
 
@@ -89,10 +75,6 @@ global:
 frontend:
   image:
     repository: chatgpt-next-web
-
-backend:
-  image:
-    repository: nextchat-backend
 ```
 
 ### 启用 Ingress
@@ -143,27 +125,8 @@ frontend:
   env:
     OPENAI_API_KEY: sk-xxx
     CODE: password123
-    BASE_URL: http://nextchat-backend:3001
+    BASE_URL: http://your-custom-url
     ENABLE_MCP: "true"
-
-backend:
-  replicaCount: 1
-  image:
-    repository: registry.example.com/nextchat-backend
-    tag: v1.0.0
-  service:
-    type: ClusterIP
-  persistence:
-    enabled: true
-    size: 10Gi
-    storageClass: fast-disk
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
 ```
 
 ## 部署
@@ -181,9 +144,7 @@ helm/
 ├── README.md            # 本文档
 └── templates/
     ├── _helpers.tpl     # 辅助函数
-    ├── deployment-frontend.yaml
-    ├── deployment-backend.yaml
-    ├── pvc-backend.yaml
-    ├── service-frontend.yaml
-    └── service-backend.yaml
+    ├── deployment.yaml  # 部署配置
+    ├── pvc.yaml        # 卷存储配置
+    └── service.yaml     # 服务配置
 ```

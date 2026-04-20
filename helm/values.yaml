@@ -3,7 +3,7 @@
 # Replica count
 replicaCount: 1
 
-# Common environment variable for both frontend and backend
+# Common environment variable (access password)
 code: ""
 
 # Image configuration
@@ -22,21 +22,7 @@ frontend:
     requests:
       cpu: 100m
       memory: 128Mi
-
-backend:
-  image:
-    repository: yidadaa/nextchat-backend
-    tag: "1.0"
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  env:
-    nodeEnv: production
-    port: "3001"
+  # Data persistence - merged from old backend
   persistence:
     enabled: true
     size: 1Gi
@@ -55,3 +41,5 @@ disableGpt4: ""
 enableBalanceQuery: ""
 disableFastLink: ""
 enableMcp: ""
+# Data directory for persistence
+dataDir: "/opt/chat/data"

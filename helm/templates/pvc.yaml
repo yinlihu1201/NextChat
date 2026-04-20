@@ -1,4 +1,4 @@
-{{- if .Values.backend.persistence.enabled }}
+{{- if .Values.frontend.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -7,11 +7,11 @@ metadata:
     {{- include "nextchat.labels" . | nindent 4 }}
 spec:
   accessModes:
-    - {{ .Values.backend.persistence.accessMode }}
+    - {{ .Values.frontend.persistence.accessMode }}
   resources:
     requests:
-      storage: {{ .Values.backend.persistence.size }}
-  {{- if .Values.backend.persistence.storageClass }}
-  storageClassName: {{ .Values.backend.persistence.storageClass }}
+      storage: {{ .Values.frontend.persistence.size }}
+  {{- if .Values.frontend.persistence.storageClass }}
+  storageClassName: {{ .Values.frontend.persistence.storageClass }}
   {{- end }}
 {{- end }}

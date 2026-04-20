@@ -1,8 +1,10 @@
 import { readFile, writeFile, mkdir, access } from "fs/promises";
 import path from "path";
 
-const DATA_DIR = path.join("/opt", "chat", "data");
-const DATA_PATH = path.join(DATA_DIR, "account-data.json");
+// Data directory configuration - use environment variable or fallback to local directory
+export const DATA_DIR =
+  process.env.DATA_DIR || path.join(process.cwd(), "data");
+export const DATA_PATH = path.join(DATA_DIR, "account-data.json");
 
 /**
  * Ensure data directory exists, create if not
@@ -37,6 +39,3 @@ export async function writeJsonFile<T = any>(
   const content = JSON.stringify(data, null, 2);
   await writeFile(filePath, content, "utf-8");
 }
-
-// Export constants for external use
-export { DATA_DIR, DATA_PATH };
